@@ -14,3 +14,12 @@ export const validateCredentials = [
     .isLength({ min: 5 })
     .withMessage("Password must be at least 5 characters long"),
 ];
+
+export const validateLoginCredentials = [
+  body("email")
+    .isLength({ min: 3 })
+    .withMessage("Email must be at least 3 characters long"),
+  body("password")
+    .isLength({ min: 5 })
+    .withMessage("Password must be at least 5 characters long"),
+];

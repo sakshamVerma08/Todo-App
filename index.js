@@ -6,8 +6,13 @@ import { authMiddleware } from "./middlewares/auth.js";
 import {
   signUpController,
   loginController,
+  logoutController,
 } from "./controllers/auth-controller.js";
 
+import {
+  validateCredentials,
+  validateLoginCredentials,
+} from "./middlewares/validation-rules.js";
 const app = express();
 connectToDB;
 dotenv.config();
@@ -15,9 +20,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // APPLICATION ROUTES //
-app.post("/signup", signUpController);
+app.post("/signup", validateCredentials, signUpController);
 
-app.get("/login", loginController);
+app.post("/login", validateLoginCredentials, loginController);
+
+app.delete("/logout", authMiddleware, logoutController);
 
 app.get("/get-todos", authMiddleware, getTodos);
 
