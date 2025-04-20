@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 
 const userSchema = new mongoose.Schema(
   {
-    name: {
+    username: {
       type: String,
       required: true,
     },
@@ -11,22 +12,24 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      match: [
-        /^[A-Za-z0-9._%+-]+@gmail\.com$/,
-        "Email must be a valid @gmail.com address",
-      ],
-      lowercase: true,  
-      trim:true,
+      lowercase: true,
+      trim: true,
     },
 
     password: {
       type: String,
       required: true,
       select: false,
-      length: { min: 5 },
     },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("User",userSchema);
+userSchema.pre("save", async function (next) {
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
+  next();
+});
+
+export default mongoose.model("User", userSchema);

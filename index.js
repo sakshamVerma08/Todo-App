@@ -2,19 +2,28 @@ import express from "express";
 import dotenv from "dotenv";
 import connectToDB from "./db/db.js";
 import { createTodo, getTodos } from "./controllers/todo-controller.js";
+import { authMiddleware } from "./middlewares/auth.js";
+import {
+  signUpController,
+  loginController,
+} from "./controllers/auth-controller.js";
+
 const app = express();
 connectToDB;
 dotenv.config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/signup", authMiddleware, signUpController);
+// APPLICATION ROUTES //
+app.post("/signup", signUpController);
 
-app.get("/get-todos", getTodos);
+app.get("/login", loginController);
 
-app.post("/create-todo", createTodo);
+app.get("/get-todos", authMiddleware, getTodos);
 
-app.delete("/delete-todo:id", (req, res) => {
+app.post("/create-todo", authMiddleware, createTodo);
+
+app.delete("/delete-todo:id", authMiddleware, (req, res) => {
   try {
     const { id } = req.params;
     if (!id) {
