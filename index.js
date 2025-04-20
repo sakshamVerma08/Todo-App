@@ -1,17 +1,16 @@
 import express from "express";
 import dotenv from "dotenv";
 import connectToDB from "./db/db.js";
-import createTodo from "./controllers/todo-controller.js";
-
+import { createTodo, getTodos } from "./controllers/todo-controller.js";
 const app = express();
 connectToDB;
 dotenv.config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/get-todos", (req, res) => {
-  res.send("Hello World");
-});
+app.get("/signup", authMiddleware, signUpController);
+
+app.get("/get-todos", getTodos);
 
 app.post("/create-todo", createTodo);
 

@@ -1,5 +1,5 @@
 import Todo from "../schemas/todo-schema.js";
-const createTodo = async (req, res, next) => {
+export const createTodo = async (req, res, next) => {
   try {
     const { title, description, priority, status } = req.body;
 
@@ -24,4 +24,17 @@ const createTodo = async (req, res, next) => {
   }
 };
 
-export default createTodo;
+export const getTodos = async (req, res, next) => {
+  try {
+    const todos = await Todo.find();
+
+    if (!todos) {
+      return res.status(400).json({ message: "No todos found" });
+    }
+
+    return res.status(200).json(todos);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
