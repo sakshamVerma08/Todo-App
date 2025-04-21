@@ -1,9 +1,8 @@
 import jwt from "jsonwebtoken";
-import bcrypt, { compareSync } from "bcrypt";
 import User from "../schemas/user-schema.js";
-
+import Blacklist from "../schemas/blacklist-schema.js";
 import { validationResult } from "express-validator";
-
+import bcrypt from "bcrypt";
 export const signUpController = async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -20,8 +19,7 @@ export const signUpController = async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    const hashedPassword = await existingUser.hashPassword(password);
-
+    const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
       username,
       email,
@@ -87,4 +85,31 @@ export const loginController = async (req, res) => {
   }
 };
 
-export const logoutController = async (req, res) => {};
+export const logoutController = async (req, res) => {
+  // PROTECTED ROUTE
+  if (req.headers.authorization === undefined) {
+    return res.status(400).json({ message: "Token is required to logout" });
+  }
+  const token = req.headers.authorization.split(" ")[1];
+
+  if (!token) {
+    return res.status(400).json({ message: "Token is required to logout" });
+  }
+
+  try {
+    const existingToken = await Blacklist.findOne({ token });
+
+    if (existingToken) {
+      return res.status(400).json({ message: "Token already blacklisted" });
+    }
+
+    Blacklist.create({ token });
+
+    return res
+      .status(200)
+      .json({ message: "Logout successful", success: true });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Internal Server error" });
+  }
+};

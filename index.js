@@ -24,7 +24,7 @@ app.post("/signup", validateCredentials, signUpController);
 
 app.post("/login", validateLoginCredentials, loginController);
 
-app.delete("/logout", authMiddleware, logoutController);
+app.post("/logout", authMiddleware, logoutController);
 
 app.get("/get-todos", authMiddleware, getTodos);
 
