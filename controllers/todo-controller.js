@@ -81,13 +81,37 @@ export const updateTodo = async (req, res, next) => {
       return res.status(404).jso({ message: "Todo not found" });
     }
 
+    return res.status(200).json({
+      message: "Todo updated successfully",
+      success: true,
+      data: updatedTodo,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const markCompleteController = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: "Couldn't get ID" });
+    }
+
+    const todo = await Todo.findByIdAndUpdate(
+      id,
+      { status: "completed" },
+      { new: true, runValidators: true }
+    );
+
+    if (!todo) {
+      return res.status(404).json({ message: "Todo not found" });
+    }
+
     return res
       .status(200)
-      .json({
-        message: "Todo updated successfully",
-        success: true,
-        data: updatedTodo,
-      });
+      .json({ message: "Todo marked as completed", success: true, data: todo });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Internal Server Error" });

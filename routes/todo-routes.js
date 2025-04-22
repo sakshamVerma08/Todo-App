@@ -6,6 +6,7 @@ import {
   getTodos,
   deleteTodo,
   updateTodo,
+  markCompleteController
 } from "../controllers/todo-controller.js";
 
 const router = express.Router();
@@ -17,5 +18,7 @@ router.post("/create-todo", authMiddleware, createTodo);
 router.put("/update-todo/:id", authMiddleware, updateTodo);
 
 router.delete("/delete-todo/:id", authMiddleware, deleteTodo);
+
+router.put("/mark-completed/:id", authMiddleware, markCompleteController);
 
 export default router;

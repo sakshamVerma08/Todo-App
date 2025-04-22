@@ -29,17 +29,20 @@ A RESTful API backend for managing todo tasks built with Node.js and Express.
 ## Installation
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/yourusername/todo-app.git
    cd todo-app
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
 
 3. Create a `.env` file in the root directory with the following variables:
+
    ```
    PORT=5000
    MONGODB_URI=mongodb://localhost:27017/todo-app
@@ -63,7 +66,10 @@ The application uses environment variables for configuration. Make sure to set u
 
 ### Authentication Routes
 
+`/api/auth`
+
 #### POST `/signup`
+
 - **Description**: Register a new user
 - **Authentication**: No
 - **Request Body**:
@@ -95,6 +101,7 @@ The application uses environment variables for configuration. Make sure to set u
   ```
 
 #### GET `/login`
+
 - **Description**: Authenticate a user and receive a token
 - **Authentication**: No
 - **Request Body**:
@@ -122,7 +129,10 @@ The application uses environment variables for configuration. Make sure to set u
 
 ### Todo Routes
 
+`api/todo`
+
 #### GET `/get-todos`
+
 - **Description**: Retrieve all todos for the authenticated user
 - **Authentication**: Required
 - **Headers**:
@@ -153,6 +163,7 @@ The application uses environment variables for configuration. Make sure to set u
   ```
 
 #### POST `/create-todo`
+
 - **Description**: Create a new todo
 - **Authentication**: Required
 - **Headers**:
@@ -189,6 +200,7 @@ The application uses environment variables for configuration. Make sure to set u
   ```
 
 #### DELETE `/delete-todo:id`
+
 - **Description**: Delete a todo by ID
 - **Authentication**: Required
 - **Headers**:
@@ -229,6 +241,7 @@ The application implements error handling middleware to provide consistent error
 - Server errors (500)
 
 All error responses follow a standard format:
+
 ```json
 {
   "success": false,
