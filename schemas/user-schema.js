@@ -12,7 +12,6 @@ export const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      trim: true,
     },
 
     password: {
@@ -32,6 +31,5 @@ userSchema.pre("save", async function (next) {
 userSchema.methods.comparePassword = async function (password) {
   return bcrypt.compare(password, this.password);
 };
-
 
 export default mongoose.model("User", userSchema);

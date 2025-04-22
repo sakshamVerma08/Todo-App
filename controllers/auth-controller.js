@@ -56,32 +56,25 @@ export const loginController = async (req, res) => {
 
     const { email, password } = req.body;
 
-    const existingUser = await User.findOne({ email }).select("+password");
-
-    if (!existingUser) {
-      return res.status(400).json({ message: "User doesn't exist" });
+    const user = await User.findOne({ email }).select("+password");
+    if (!user) {
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const samePassword = await existingUser.comparePassword(password);
-    if (!samePassword) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
-    const token = jwt.sign(
-      { userId: existingUser._id, email: existingUser.email },
-      process.env.JWT_SECRET,
-      { expiresIn: "24h" }
-    );
-
-    if (!token) {
-      return res.status(400).json({ message: "Token generation failed" });
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) {
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    return res
-      .status(201)
-      .json({ message: "Login successful", data: token, success: true });
+    const payload = { userId: user._id, email: user.email };
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "24h",
+    });
+
+    return res.status(200).json({ success: true, data: token });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: "Internal Server error" });
+    console.error("Login error:", err);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
