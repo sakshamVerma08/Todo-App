@@ -56,3 +56,40 @@ export const deleteTodo = async (req, res, next) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const updateTodo = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ message: "Couldn't get ID" });
+    }
+
+    const updates = {};
+    for (const key in req.body) {
+      if (req.body[key] !== undefined) {
+        updates[key] = req.body[key];
+      }
+    }
+
+    const updatedTodo = await Todo.findByIdAndUpdate(id, updates, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updatedTodo) {
+      return res.status(404).jso({ message: "Todo not found" });
+    }
+
+    return res
+      .status(200)
+      .json({
+        message: "Todo updated successfully",
+        success: true,
+        data: updatedTodo,
+      });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
