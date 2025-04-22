@@ -8,7 +8,9 @@ connectToDB;
 dotenv.config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.get("/", (req, res) => {
+  res.send("TEST THIS ON POSTMAN API");
+});
 app.use("/api/auth", authRoutes);
 
 app.use("/api/todo", todoRoutes);
