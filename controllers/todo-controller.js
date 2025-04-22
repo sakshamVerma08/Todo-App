@@ -38,3 +38,21 @@ export const getTodos = async (req, res, next) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const deleteTodo = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const deleted = await Todo.findByIdAndDelete(id);
+    if (!deleted) {
+      return res.status(400).json({ message: "Todo coudln't be deleted" });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Todo deleted successfully", success: true });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
